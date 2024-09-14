@@ -1,0 +1,8 @@
+# byte-compiled / optimized / DLL files
+__pycache__/
+node_modules
+env
+venv
+evn
+migrations/
+db.sqlite3

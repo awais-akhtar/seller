@@ -1,0 +1,244 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Diamonds {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+<style>
+
+.font-icon-detail.coin-card1 {
+    transition: transform 0.3s ease;
+    padding: 20px;
+    border: 1px solid #e871ee;
+    border-radius: 8px;
+    text-align: center; /* Align details to the left */
+    margin-bottom: 20px;
+    margin-left: 120px;
+}
+
+.font-icon-detail.coin-card1:hover {
+    transform: scale(1.1);
+}
+
+.font-icon-detail.coin-card1 img.avatar {
+    width: 100px; /* Adjust image width as needed */
+    height: 100px; /* Adjust image height as needed */
+    border-radius: 50%; /* Round the avatar image */
+    margin-right: 20px; /* Provide some spacing between image and details */
+}
+
+.font-icon-detail.coin-card1 .col-md-9 {
+    padding-top: 10px; /* Adjust spacing as needed */
+}
+
+
+
+.coin-card, .eresponse-card {
+  transition: transform 0.3s ease;
+  padding: 20px;
+  border: 1px solid #e871ee;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 20px;
+  width: 100%; /* Ensure consistent width */
+}
+
+.coin-card:hover:hover {
+  transform: scale(1.1);
+}
+
+.coin-card img, .response-card img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.price {
+  font-size: 16px;
+  color: #1abc9c; /* Green color for final price */
+  font-weight: bold;
+}
+
+.price1 {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#rigthp{
+  margin-left: 238px;
+}
+
+#leftp{
+  margin-right: 250px;
+}
+.myid {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* Hide responseContainer initially */
+#collapseExample  {
+  display: none;
+}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="content">
+    <div class="row">
+      <div class="card col-md-12">
+        <div class="col-md-3 px-md-1">
+          <div class="form-group">
+            <label class="myid">Likee ID</label>
+            <input name="tiktokid" type="text" class="form-control" placeholder="Please Enter Likee ID" required>
+            <div class="invalid-feedback">Please enter a Likee ID.</div> <!-- Error message placeholder -->
+          </div>
+        </div>
+        <div class="card-footer">
+          <button type="button" id="searchBtn" class="btn btn-fill btn-primary" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Search</button>
+        </div>
+      </div>
+      <div class="collapse" id="collapseExample">
+        <div class="card card-body">
+          <div class="row">
+          <div id="leftp" class="left-panel">
+            <div id="responseContainer" class="response-card"></div>
+          </div>
+          <!-- <div id="rigthp" class="rigth-panel">
+            <div id="imgresponseContainer" class="eresponse-card"></div>
+          </div> -->
+        </div>
+        </div>
+      </div>
+      
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-body all-icons">
+
+            <div class="row">
+              {% if c_options %}
+              {% for coin_option in c_options %}
+              <div class="font-icon-list col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <div class="font-icon-detail coin-card">
+                      <img class="avatar" src="{{ ASSETS_ROOT }}/img/diamond.png" alt="{{ coin_option.coins }} Diamonds">
+                      <p><strong class="price1">{{ coin_option.coins }} Diamonds</strong></p>
+                      <p><strong class="price">Price: {{ coin_option.price }}</strong></p>
+                  </div>
+              </div>
+              {% endfor %}
+              {% else %}
+              <div class="alert alert-warning text-center" role="alert">
+                Please list Diamonds First
+              </div>
+              {% endif %}
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden form for submitting coin data -->
+<form id="coinForm" method="POST" action="{% url 'likeeinvoice' %}" style="display:none;">
+  {% csrf_token %}
+  <input type="hidden" name="tiktokid" id="formTiktokId">
+  <input type="hidden" name="coin" id="formCoin">
+  <input type="hidden" name="price" id="formPrice">
+</form>
+
+{% endblock content %}
+
+
+<!-- Specific Page JS goes HERE  -->
+ 
+
+{% block javascripts %}
+<!-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
+
+<script>
+  $(document).ready(function() {
+      $('#searchBtn').click(function(event) {
+          event.preventDefault();
+          var tiktokId = $('input[name="tiktokid"]').val();
+  
+          if (!tiktokId) {
+              $('input[name="tiktokid"]').addClass('is-invalid');
+              return;
+          } else {
+              $('input[name="tiktokid"]').removeClass('is-invalid');
+          }
+  
+          $.ajax({
+              url: "{% url 'getlikeeiddata' %}",
+              type: "POST",
+              data: {
+                  'tiktokid': tiktokId,
+                  'csrfmiddlewaretoken': '{{ csrf_token }}'
+              },
+              beforeSend: function() {
+                  $('#collapseExample').hide();
+              },
+              success: function(response) {
+                  if (response.message === "Success") {
+                      var tiktokData = response.tiktokid;
+  
+                      var htmlContent = `
+                          <div class="font-icon-detail coin-card1">
+                              <h3 style="text-align: center;">${tiktokData.Profile_Name} on Likee</h3>
+                              <div class="row">
+                                  <div class="col-md-3">
+                                      <img src="${tiktokData.Image_URL}" alt="Profile Image" class="avatar">
+                                  </div>
+                                  <div class="col-md-3">
+                                      <p><strong></strong> ${tiktokData.Profile_Name}</p>
+                                      <p><strong></strong> ${tiktokData.Username}</p>
+                                  </div>
+                                  <div class="col-md-6">
+                                      <p><strong>Followers:</strong> ${tiktokData.Followers}</p>
+                                      <p><strong>Likes:</strong> ${tiktokData.Likes}</p>
+                                  </div>
+                                  <p style="text-align: center;"><strong > ${tiktokData.Bio}</strong></p>
+                              </div>
+                          </div>
+                      `;
+                      $('#responseContainer').html(htmlContent);
+                      $('#collapseExample').slideDown();
+                  } else {
+                      $('#responseContainer').text('Error: ' + response.message);
+                      $('#collapseExample').slideDown();
+                  }
+              },
+              error: function(xhr, errmsg, err) {
+                  $('#responseContainer').text('Error: ' + xhr.status + ": " + xhr.responseText);
+                  $('#collapseExample').slideDown();
+              }
+          });
+      });
+  
+      $('.coin-card').click(function() {
+          var tiktokId = $('input[name="tiktokid"]').val();
+          var coin = $(this).find('.price1').text();
+          var price = $(this).find('.price').text();
+  
+          // Populate the hidden form fields
+          $('#formTiktokId').val(tiktokId);
+          $('#formCoin').val(coin);
+          $('#formPrice').val(price);
+  
+          // Submit the form
+          $('#coinForm').submit();
+      });
+  });
+  </script>
+
+<!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock javascripts %}

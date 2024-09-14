@@ -1,0 +1,73 @@
+
+    <div class="sidebar">
+        <!--
+          Tip 1: You can change the color of the sidebar using: data-color="blue | green | orange | red"
+      -->
+        <div class="sidebar-wrapper">
+            <div class="logo">
+                <a href="javascript:void(0)" class="simple-text logo-mini">
+                    DW
+                </a>
+                <a href="javascript:void(0)" class="simple-text logo-normal">
+                    Dark Store
+                </a>
+            </div>
+            <ul class="nav">
+                <li class="{% if 'index' in segment %} active {% endif %} ">
+                    <a href="/">
+                        <i class="tim-icons icon-chart-pie-36"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+                <li class="{% if 'tracking' in segment %} active {% endif %}">
+                    <a href="/tracking">
+                    
+                        <i class="fas fa-tasks"></i>
+                        <p>status</p>
+                    </a>
+                </li>
+                <li class="{% if 'tiktokcoins' in segment %} active {% endif %}">
+                    <a href="/tiktokcoins">
+                        <i><img class="avatar" src="{{ ASSETS_ROOT }}/img/coin.png" style="width: 20px; height: 20px;"></i>
+                        <p>Tiktok Coins</p>
+                    </a>
+                </li>    
+                <li class="{% if 'Likeediamonds' in segment %} active {% endif %}">
+                    <a href="/Likeediamonds">
+                        <i><img class="avatar" src="{{ ASSETS_ROOT }}/img/Diamond.png" style="width: 20px; height: 20px;"></i>
+                        <p>Likee Diamonds</p>
+                    </a>
+                </li>
+                <li class="{% if 'user' in segment %} active {% endif %}">
+                    <a href="/user.html">
+                        <i class="tim-icons icon-single-02"></i>
+                        <p>User Profile</p>
+                    </a>
+                </li>
+                <li class="{% if 'tables' in segment %} active {% endif %}">
+                    <a href="/tables.html">
+                        <i class="tim-icons icon-puzzle-10"></i>
+                        <p>Table List</p>
+                    </a>
+                </li>
+                <li class="{% if 'likeeinvoice' in segment %} active {% endif %}">
+                    <a href="/likeeinvoice">
+                        <i class="tim-icons icon-align-center"></i>
+                        <p>likeeinvoice</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="/rtl.html">
+                        <i class="tim-icons icon-world"></i>
+                        <p>RTL Support</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'login' %}">
+                        <i class="tim-icons icon-button-power"></i>
+                        <p>Logout</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>

@@ -1,0 +1,143 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Status Tracking {% endblock %} 
+
+{% block stylesheets %}
+<style>
+  .responses {
+    width: 50px; /* Adjust image width as needed */
+    height: 50px; /* Adjust image height as needed */
+    border-radius: 20%; /* Round the avatar image */
+    margin: 5px;
+  }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="content">
+  <!-- Search Input -->
+  <!-- <div class="row mb-3">
+    <div class="col-md-3">
+      <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+    </div>
+  </div> -->
+
+  <div class="row">
+    <div class="col-md-12">
+      {% if not tiktoktracking and not likeetracking %}
+      <div class="alert alert-warning text-center" role="alert">
+        No data found
+      </div>
+      {% else %}
+      <!-- First section: TikTok Tracking -->
+      {% if tiktoktracking %}
+      {% for profile in tiktoktracking %}
+      <div class="card mb-3 profile-card" style="border-radius: 10px;">
+        <div class="row no-gutters">
+          <div class="col-md-3">
+            <img src="{{ profile.avatar_url }}" alt="Profile Image" class="responses">
+            <p class="card-title ml-1">@{{ profile.username }}</p>
+            <p class="card-title ml-1">{{ profile.profile_name }}</p>
+          </div>
+          <div class="col-md-9">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <p class="card-text"><strong>Item:</strong> {{ profile.item }}</p>
+                  <p class="card-text"><strong>paid:</strong> {{ profile.price }}</p>
+                  <p class="card-text"><strong>Invoice ID:</strong> {{ profile.invoice_id }}</p>
+                </div>
+                <div class="col-md-6">
+                  <p class="card-text"><strong>Date:</strong> {{ profile.date }}</p>
+                  <p class="card-text"><strong>Status:</strong> {{ profile.status }}</p>
+                  <p class="card-text"><strong>Issue:</strong> {{ profile.issue }}</p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <p class="card-text"><strong>Comments:</strong> {{ profile.comments }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+
+      <!-- Second section: Likee Tracking -->
+      {% if likeetracking %}
+      {% for profile in likeetracking %}
+      <div class="card mb-3 profile-card" style="border-radius: 10px;">
+        <div class="row no-gutters">
+          <div class="col-md-3">
+            <img src="{{ profile.avatar_url }}" alt="Profile Image" class="responses">
+            <p class="card-title ml-1">{{ profile.username }}</p>
+            <p class="card-title ml-1">{{ profile.profile_name }}</p>
+          </div>
+          <div class="col-md-9">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <p class="card-text"><strong>Item:</strong> {{ profile.item }}</p>
+                  <p class="card-text"><strong>Paid:</strong> {{ profile.price }}</p>
+                  <p class="card-text"><strong>Invoice ID:</strong> {{ profile.invoice_id }}</p>
+                </div>
+                <div class="col-md-6">
+                  <p class="card-text"><strong>Date:</strong> {{ profile.date }}</p>
+                  <p class="card-text"><strong>Status:</strong> {{ profile.status }}</p>
+                  <p class="card-text"><strong>Issue:</strong> {{ profile.issue }}</p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <p class="card-text"><strong>Comments:</strong> {{ profile.comments }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block javascripts %}
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    // Function to filter profile cards
+    function filterProfiles(value) {
+      $('.profile-card').filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+      });
+    }
+
+    // Search input in the content
+    $('#searchInput').on('keyup', function() {
+      var value = $(this).val().toLowerCase();
+      filterProfiles(value);
+    });
+
+    // Search input in the navbar modal
+    $('#navbarSearchInput').on('keyup', function() {
+      var value = $(this).val().toLowerCase();
+      filterProfiles(value);
+    });
+
+    // Close modal when search is performed
+    $('#navbarSearchInput').on('keypress', function(e) {
+      if (e.which == 13) { // Enter key pressed
+        $('#searchModal').modal('hide');
+      }
+    });
+  });
+</script>
+
+<!-- Include Bootstrap JS and dependencies if needed -->
+{% endblock javascripts %}

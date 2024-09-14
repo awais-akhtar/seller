@@ -1,0 +1,638 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Billing {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    list-style: none;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .otp-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .otp-input {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  .otp-input:focus {
+    border-color: #3ecc6d;
+    outline: none;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  .modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+  }
+  
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  /*  */
+  .bg-blue {
+    background-color: #dfe9fc9c;
+    border-radius: 5px
+  }
+
+  body {
+    background-color: none !important;
+  }
+
+  .container {
+    margin: 20px auto;
+    width: 800px;
+    padding: 30px;
+  }
+
+  .card.box1 {
+    width: 350px;
+    height: 500px;
+    background-color: #3ecc6d;
+    color: #baf0c3;
+    border-radius: 10px;
+    border: 1px solid red;
+    border-color: red;
+    box-shadow: 4px 4px 10px rgb(154, 230, 3)
+  }
+
+  .card.box2 {
+    width: 450px;
+    height: 580px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    border: 1px solid red;
+    box-shadow: 4px 4px 10px rgb(154, 230, 3)
+  }
+
+  .text {
+    font-size: 13px;
+  }
+
+  .box2 .btn.btn-primary.bar {
+    width: 20px;
+    background-color: transparent;
+    border: none;
+    color: #3ecc6d;
+  }
+
+  .box2 .btn.btn-primary.bar:hover {
+    color: #baf0c3;
+  }
+
+  .box1 .btn.btn-primary {
+    background-color: #57c97d;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ddd;
+  }
+
+  .box1 .btn.btn-primary:hover {
+    background-color: #f6f8f7;
+    color: #57c97d;
+  }
+
+  .btn.btn-success {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ddd;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+  }
+
+  .nav.nav-tabs {
+    border: none;
+    border-bottom: 2px solid #ddd;
+  }
+
+  .nav.nav-tabs .nav-item .nav-link {
+    border: none;
+    color: black;
+    border-bottom: 2px solid transparent;
+    font-size: 14px;
+  }
+
+  .nav.nav-tabs .nav-item .nav-link:hover {
+    border-bottom: 2px solid #3ecc6d;
+    color: #05cf48;
+  }
+
+  .responses {
+    width: 100px;
+    /* Adjust image width as needed */
+    height: 100px;
+    /* Adjust image height as needed */
+    border-radius: 50%;
+    /* Round the avatar image */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+  }
+
+  .nav.nav-tabs .nav-item .nav-link.active {
+    border: none;
+    border-bottom: 2px solid #3ecc6d;
+  }
+
+  .form-control {
+    border: none;
+    border-bottom: 1px solid #ddd;
+    box-shadow: none;
+    height: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 15px 0px;
+    letter-spacing: 1.5px;
+    border-radius: 0;
+    color: red;
+  }
+
+  .inputWithIcon {
+    position: relative;
+  }
+
+  img {
+    width: 50px;
+    height: 20px;
+    object-fit: cover;
+  }
+
+  .inputWithIcon span {
+    position: absolute;
+    right: 0px;
+    bottom: 9px;
+    color: #57c97d;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 14px;
+  }
+
+  .form-control:focus {
+    box-shadow: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .btn-outline-primary {
+    color: black;
+    background-color: #ddd;
+    border: 1px solid #ddd;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #05cf48;
+    border: 1px solid #ddd;
+  }
+
+  .btn-check:active+.btn-outline-primary,
+  .btn-check:checked+.btn-outline-primary,
+  .btn-outline-primary.active,
+  .btn-outline-primary.dropdown-toggle.show,
+  .btn-outline-primary:active {
+    color: #baf0c3;
+    background-color: #3ecc6d;
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+
+  .btn-group>.btn-group:not(:last-child)>.btn,
+  .btn-group>.btn:not(:last-child):not(.dropdown-toggle),
+  .btn-group>.btn-group:not(:first-child)>.btn,
+  .btn-group>.btn:nth-child(n+3),
+  .btn-group>:not(.btn-check)+.btn {
+    border-radius: 50px;
+    margin-right: 20px;
+  }
+
+  form {
+    font-size: 14px;
+  }
+
+  form .btn.btn-primary {
+    width: 100%;
+    height: 45px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #3ecc6d;
+    border: 1px solid #ddd;
+  }
+
+  form .btn.btn-primary:hover {
+    background-color: #05cf48;
+  }
+
+
+
+
+  @media (max-width:750px) {
+    .container {
+      padding: 10px;
+      width: 100%;
+    }
+
+    .text-green {
+      font-size: 14px;
+    }
+
+    .card.box1,
+    .card.box2 {
+      width: 100%;
+    }
+
+    .nav.nav-tabs .nav-item .nav-link {
+      font-size: 12px;
+    }
+  }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<!-- Modal Structure -->
+
+<div id="otpModal" class="modal" >
+  <div class="modal-content">
+    <span id="closeButton" class="close" onclick="closeModal();">&times;</span>
+    <h2 style="color: black;" class="otp-i">Enter OTP</h2>
+    <div class="otp-inputs">
+      <input id="otp-input-1" class="otp-input" type="text" maxlength="1" required oninput="focusNext(this, 'otp-input-2')" autofocus>
+      <input id="otp-input-2" class="otp-input" type="text" maxlength="1" required oninput="focusNext(this, 'otp-input-3')">
+      <input id="otp-input-3" class="otp-input" type="text" maxlength="1" required oninput="focusNext(this, 'otp-input-4')">
+      <input id="otp-input-4" class="otp-input" type="text" maxlength="1" required oninput="submitOTP()">
+    </div>
+    <div id="processing-message" style="display: none;">
+      Payment is processing... <i class="fas fa-spinner fa-spin"></i>
+    </div>
+    <div id="success-message" style="display: none;">
+      Payment processed successfully <i class="fas fa-check-circle" style="color: green;"></i>
+    </div>
+    <div id="transferring-message" style="display: none;">
+      Transferring diamonds... <i class="fas fa-spinner fa-spin"></i>
+    </div>
+    <div id="coin-success-message" style="display: none;">
+      Diamonds transferred successfully <i class="fas fa-check-circle" style="color: green;" ></i>
+      <div id="redirectButton1" class="border-bottom mt-1 mb-1"  style="display: none; font-weight: 2px;"></div>
+      <button id="redirectButton" style="display: none;" class=" btn btn-outline-dark btn-sm" style="display: none;" onclick="redirectToLikeediamonds();">Close</button>
+    </div>
+  </div>
+  <form id="successForm" style="display: none;">
+    <input type="hidden" name="price" id="priceInput" value="{{ coin.price }}">
+    <input type="hidden" name="coin" id="coinInput" value="{{ coin.coin }}">
+    <input type="hidden" name="username" id="usernameInput" value="{{ coin.data.username  }}">
+    <input type="hidden" name="invoice_id" id="invoiceIdInput" value="{{ coin.invoice_id }}">
+  </form>
+</div>
+
+<script>
+  function closeModal() {
+    document.getElementById('otpModal').style.display = 'none';
+    // Reset success messages and clear OTP inputs
+    document.getElementById('success-message').style.display = 'none';
+    document.getElementById('coin-success-message').style.display = 'none';
+    document.querySelectorAll('.otp-input').forEach(input => input.value = '');
+    document.getElementById('closeButton').style.display = 'block';
+    document.getElementById('redirectButton').style.display = 'none';
+    document.getElementById('redirectButton1').style.display = 'none';
+  }
+
+  function focusNext(current, nextID) {
+    if (current.value.length === 1) {
+      document.getElementById(nextID).focus();
+    }
+  }
+
+  function submitOTP() {
+    // Hide OTP inputs
+    document.querySelector('.otp-inputs').style.display = 'none';
+    document.querySelector('.otp-i').style.display = 'none';
+
+    // Hide close button and show processing message
+    document.getElementById('closeButton').style.display = 'none';
+    document.getElementById('processing-message').style.display = 'block';
+
+    // Simulate processing delay
+    setTimeout(function() {
+      // Hide processing message and show success message
+      document.getElementById('processing-message').style.display = 'none';
+      document.getElementById('success-message').style.display = 'block';
+
+      // After 2 seconds, show transferring message
+      setTimeout(function() {
+        document.getElementById('transferring-message').style.display = 'block';
+
+        // Simulate another delay before showing coin success message
+        setTimeout(function() {
+          document.getElementById('transferring-message').style.display = 'none';
+          document.getElementById('coin-success-message').style.display = 'block';
+          document.getElementById('redirectButton').style.display = 'block';
+          document.getElementById('redirectButton1').style.display = 'block';
+
+          // AJAX request after showing coin success message
+          sendSuccessForm();
+        }, 2000); // Simulate 2 seconds delay for transferring Coins
+      }, 2000); // Simulate 2 seconds delay after showing success message
+    }, 2000); // Simulate 2 seconds processing time for payment
+  }
+
+  function sendSuccessForm() {
+    const formData = new FormData(document.getElementById('successForm'));
+
+    fetch('{% url "sucessdiamonds" %}', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
+
+  function redirectToLikeediamonds() {
+    window.location.href = '{% url "Likeediamonds" %}';
+  }
+</script>
+
+
+
+
+
+
+<!-- Modal Structure -->
+
+
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <!-- <div class="card-header mb-5">
+          <h5 class="card-category">Black Table Heading</h5>
+          <h3 class="card-title">Created using Poppins Font Family</h3>
+        </div> -->
+        <div class="card-body">
+          <div class="container  d-md-flex align-items-center">
+            <div class="card box1 shadow-sm p-md-5 p-md-5 p-4 myd" style="margin-right: 2px;">
+              <div class="fw-bolder mb-4">
+                <img src="{{ coin.data.Image_URL }}" alt="Profile Image" class="responses">
+              </div>
+              <div class="d-flex flex-column">
+                <div class="d-flex align-items-center justify-content-between text">
+                  <p class="ps-2"><img class="avatar" src="{{ ASSETS_ROOT }}/img/diamond.png" alt="Diamonds">
+                  </p>
+                  <p class="ps-2">{{ coin.coin }}</p>
+                </div>
+                <div class="d-flex align-items-center justify-content-between text mb-4">
+                  <p class="ps-2">Price</p>
+                  <p class="ps-2">{{ coin.price }}</p>
+                </div>
+                <div class="border-bottom mb-4"></div>
+                <div class="d-flex flex-column mb-4">
+                  <p class="ps-2"><span class="far fa-file-alt text"> Invoice: SN{{ coin.invoice_id }}</p>
+                  <p class="ps-2">Name: {{ coin.data.Profile_Name }}</p>
+                  <p class="ps-2">Username: {{ coin.data.Username }}</p>
+                  <p class="ps-2">Followers: {{ coin.data.Followers }}</p>
+                  <p class="ps-2">Likes: {{ coin.data.Likes }}</p>
+                  <!-- <p class="ps-2">Bio: {{ coin.data.Bio }}</p> -->
+                  <p class="ps-2">Terms and conditions apply. All rights reserved.</p>
+                  
+                </span>
+                </div>
+              </div>
+            </div>
+            <div class="card box2 shadow-sm">
+              <div class="d-flex align-items-center justify-content-between p-md-5 p-4">
+                <span class="h5 fw-bold m-0">Payment methods</span>
+                <!-- <div class="btn btn-primary bar"><span class="fas fa-bars"></span></div> -->
+              </div>
+              <ul class="nav nav-tabs mb-3 px-md-4 px-2">
+                <li class="nav-item">
+                  <a class="nav-link px-2 " aria-current="page" href="#">Credit Card</a>
+                </li>
+                <!-- <li class="nav-item">
+                  <a class="nav-link px-2" href="#">Mobile Payment</a>
+                </li>
+                <li class="nav-item ms-auto">
+                  <a class="nav-link px-2" href="#">+ More</a>
+                </li> -->
+              </ul><br>
+              <!-- <div class="px-md-5 px-4 mb-4 d-flex align-items-center">
+                <div class="btn btn-success me-4"><span class="fas fa-plus"></span></div>
+                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                  <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+                  <label class="btn btn-outline-primary" for="btnradio1"><span class="pe-1">+</span>5949</label>
+                  <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+                  <label class="btn btn-outline-primary" for="btnradio2"><span class="lpe-1">+</span>3894</label>
+                  <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+                  <label class="btn btn-outline-primary" for="btnradio3"><span class="pe-1">+</span>1824</label>
+                </div>
+              </div> -->
+              <form action="">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="d-flex flex-column px-md-5 px-4 mb-4">
+                      <span>Cardholder Name</span>
+                      <div class="inputWithIcon">
+                        <input class="form-control" type="text" placeholder="Joan">
+                        <span class=""><span class="fas fa-user"></span></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="d-flex flex-column px-md-5 px-4 mb-4">
+                      <span>Card Number</span>
+                      <div class="inputWithIcon">
+                        <input id="card-number" class="form-control bg-blue" type="text" placeholder="e.g. 51** *****">
+                        <span class=""><span class="fas fa-credit-card"></span></span>
+                      </div>
+                      <span id="card-type" class="text-muted bg-blue"></span>
+                      <span id="card-type" class="text-muted">
+                        <i id="card-icon" class=""></i>
+                        <span id="card-validity" class="ml-2"></span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <div class="d-flex flex-column ps-md-5 px-4 mb-4">
+                      <span>Expiry</span>
+                      <div class="inputWithIcon">
+                        <input class="form-control" type="text" placeholder="MM/YY" required>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="d-flex flex-column pe-md-5 px-4 mb-4">
+                      <span>CVV</span>
+                      <div class="inputWithIcon">
+                        <input id="vcc-number" class="form-control" type="text" placeholder="***" required>
+                        <span class="fas fa-lock"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 px-md-5 px-4 mt-3">
+                  <div class="btn btn-primary w-100">Pay {{ coin.price }}</div>
+                </div>
+            </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+{% endblock content %}
+
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const cardNumberInput = document.getElementById('card-number');
+  const vccNumberInput = document.getElementById('vcc-number');
+  const cardTypeSpan = document.getElementById('card-type');
+  const cardValiditySpan = document.getElementById('card-validity');
+  const cardIcon = document.getElementById('card-icon');
+  cardNumberInput.required = true;
+  vccNumberInput.required = true;
+
+
+  vccNumberInput.addEventListener('input', function (event) {
+    let vccNumber = event.target.value.replace(/\s+/g, '');
+    // Limit the VCC number to 3 digits
+    if (vccNumber.length > 3) {
+      vccNumber = vccNumber.slice(0, 3);
+    }
+    // Update the input value
+    event.target.value = vccNumber;
+  });
+
+  cardNumberInput.addEventListener('input', function (event) {
+    let cardNumber = event.target.value.replace(/\s+/g, '');
+    // Limit the card number to 16 digits
+    if (cardNumber.length > 16) {
+      cardNumber = cardNumber.slice(0, 16);
+    }
+
+    // Format the card number
+    event.target.value = cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ');
+
+    // Detect card type and display icons
+    if (/^4/.test(cardNumber)) {
+      //cardTypeSpan.textContent = 'Visa';
+      cardIcon.className = 'fab fa-cc-visa';
+      cardValiditySpan.textContent = cardNumber.length === 16 ? '✔' : '';
+      cardValiditySpan.style.color = 'green';
+    } else if (/^5[1-5]/.test(cardNumber)) {
+      // cardTypeSpan.textContent = 'MasterCard';
+      cardIcon.className = 'fab fa-cc-mastercard';
+      cardValiditySpan.textContent = cardNumber.length === 16 ? '✔' : '';
+      cardValiditySpan.style.color = 'green';
+    } else {
+      cardTypeSpan.textContent = '';
+      cardIcon.className = '';
+      cardValiditySpan.textContent = cardNumber.length === 16 ? '✖ Invalid' : '';
+      cardValiditySpan.style.color = 'red';
+    }
+  });
+
+  const payButton = document.querySelector('.btn.btn-primary.w-100');
+  const modal = document.getElementById('otpModal');
+  const closeButton = document.querySelector('.close');
+  const submitOtpButton = document.getElementById('submit-otp');
+  const otpInputs = document.querySelectorAll('.otp-input');
+
+  // Show the modal when the Pay button is clicked
+  payButton.addEventListener('click', function() {
+    modal.style.display = 'block';
+  });
+
+  // Close the modal when the close button is clicked
+  closeButton.addEventListener('click', function() {
+    modal.style.display = 'none';
+  });
+
+  // Close the modal when clicking outside the modal content
+  window.addEventListener('click', function(event) {
+    if (event.target == modal) {
+      modal.style.display = 'none';
+    }
+  });
+
+  // Automatically move to the next input field when a digit is entered
+  otpInputs.forEach((input, index) => {
+    input.addEventListener('input', function() {
+      if (input.value.length === 1 && index < otpInputs.length - 1) {
+        otpInputs[index + 1].focus();
+      }
+    });
+  });
+
+  // Handle OTP submission
+  submitOtpButton.addEventListener('click', function() {
+    const otp = Array.from(otpInputs).map(input => input.value).join('');
+    if (otp.length === 4) {
+      alert('OTP Submitted: ' + otp);
+      modal.style.display = 'none';
+    } else {
+      alert('Please enter a valid 4-digit OTP.');
+    }
+  });
+});
+
+</script>
+{% endblock javascripts %}
